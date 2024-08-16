@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplement Store Management</title>
+    <link rel="stylesheet" href="package.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Package List</h1>
+
+        <!-- Add Package Form -->
+        <div id="add-package">
+            <h2>Add New Package</h2>
+            <form id="addpackage">
+                <input type="text" id="name" placeholder="Package Name" required>
+                <input type="number" id="price" placeholder="Price" step="0.01" required>
+                <input type="text" id="duration" placeholder="Duration" required>
+                <input type="text" id="benefits" placeholder="Benefits" required>
+                <button type="submit">Add Package</button>
+            </form>
+        </div>
+
+        <!-- Update Package Form -->
+        <div id="update-package" class="hidden">
+            <h2>Update Package</h2>
+            <form id="updatepackage">
+                <input type="hidden" id="updateId"> <!-- Hidden input to store the package ID -->
+                <input type="text" id="updateName" placeholder="Package Name" required>
+                <input type="number" id="updatePrice" placeholder="Price" step="0.01" required>
+                <input type="text" id="updateDuration" placeholder="Duration" required>
+                <input type="text" id="updateBenefits" placeholder="Benefits" required>
+                <button type="submit">Update Package</button>
+            </form>
+        </div>
+
+        <h2>Available Packages</h2>
+        <table id="packageList">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Days</th>
+                    <th>Benefits</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Package rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="package.js"></script>
+</body>
+</html>
