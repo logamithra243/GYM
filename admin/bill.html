@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Billing Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c2c2c;
+            color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0f0e0e00;
+            border-radius: 5px;
+        }
+
+        input, select {
+            display: block;
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #555;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #invoice {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Create Bill for Member</h2>
+    <form id="billingForm">
+        <input type="email" id="memberEmail" placeholder="Member Email" required>
+        <input type="text" id="supplement" placeholder="Supplement" required>
+        <input type="number" id="supplementPrice" placeholder="Supplement Price" required>
+        <input type="number" id="supplementQuantity" placeholder="Supplement Quantity" required>
+        <input type="text" id="dietDetail" placeholder="Package Name" required>
+        <input type="number" id="dietPrice" placeholder="Package Price" required>
+        <input type="date" id="dueDate" placeholder="Due Date" required>
+        <button type="submit">Generate Bill</button>
+    </form>
+    <div class="container">
+        <h2>Admin Billing Page</h2>
+        <button id="viewEmailsBtn">View All Emails with Generated Bills</button>
+        <div id="emailList"></div>
+        <div id="invoice"></div>
+    </div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC9vUqJZrK8yP1fkc9gbVNBJbI_PrqvOd0",
+        authDomain: "gym-8d5d1.firebaseapp.com",
+        databaseURL: "https://gym-8d5d1-default-rtdb.firebaseio.com",
+        projectId: "gym-8d5d1",
+        storageBucket: "gym-8d5d1.appspot.com",
+        messagingSenderId: "509762920091",
+        appId: "1:509762920091:web:76324124895e25cdf9f03e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    document.getElementById('billingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const memberEmail = document.getElementById('memberEmail').value;
+        const supplement = document.getElementById('supplement').value;
+        const supplementPrice = parseFloat(document.getElementById('supplementPrice').value);
+        const supplementQuantity = parseInt(document.getElementById('supplementQuantity').value);
+        const dietDetail = document.getElementById('dietDetail').value;
+        const dietPrice = parseFloat(document.getElementById('dietPrice').value);
+        const dueDate = document.getElementById('dueDate').value;
+        const totalAmount = (supplementPrice * supplementQuantity + dietPrice).toFixed(2);
+
+        const billData = {
+            memberEmail: memberEmail,
+            supplement: supplement,
+            supplementPrice: supplementPrice,
+            supplementQuantity: supplementQuantity,
+            dietDetail: dietDetail,
+            dietPrice: dietPrice,
+            dueDate: dueDate,
+            totalAmount: totalAmount,
+            date: new Date().toLocaleDateString()
+        };
+
+        const newBillRef = database.ref('bills').push();
+        newBillRef.set(billData).then(() => {
+            alert('Bill generated successfully!');
+            document.getElementById('billingForm').reset();
+        }).catch((error) => {
+            console.error('Error generating bill: ', error);
+        });
+    });
+
+    document.getElementById('viewEmailsBtn').addEventListener('click', function() {
+        fetchAllEmails();
+    });
+
+    function fetchAllEmails() {
+        const billsRef = database.ref('bills');
+        billsRef.once('value', snapshot => {
+            const emailListContainer = document.getElementById('emailList');
+            emailListContainer.innerHTML = '';
+
+            if (snapshot.exists()) {
+                let emailSet = new Set();
+                snapshot.forEach(childSnapshot => {
+                    const bill = childSnapshot.val();
+                    emailSet.add(bill.memberEmail);
+                });
+
+                const emailListHTML = Array.from(emailSet).map(email => `<li onclick="fetchBillDetails('${email}')">${email}</li>`).join('');
+                emailListContainer.innerHTML = `<ul>${emailListHTML}</ul>`;
+            } else {
+                emailListContainer.innerHTML = '<p>No bills found.</p>';
+            }
+        });
+    }
+
+    function fetchBillDetails(email) {
+        const billsRef = database.ref('bills');
+        billsRef.orderByChild('memberEmail').equalTo(email).once('value', snapshot => {
+            const invoiceContainer = document.getElementById('invoice');
+            invoiceContainer.innerHTML = ''; // Clear previous invoices
+
+            if (snapshot.exists()) {
+                snapshot.forEach(childSnapshot => {
+                    const bill = childSnapshot.val();
+                    const billKey = childSnapshot.key;
+
+                    const invoiceHTML = `
+                        <h3>Invoice for ${email}</h3>
+                        <p><strong>Date:</strong> ${bill.date}</p>
+                        <p><strong>Supplement:</strong> ${bill.supplement}</p>
+                        <p><strong>Supplement Price:</strong> ${bill.supplementPrice}</p>
+                        <p><strong>Supplement Quantity:</strong> ${bill.supplementQuantity}</p>
+                        <p><strong>Package Name:</strong> ${bill.dietDetail}</p>
+                        <p><strong>Package Price:</strong> ${bill.dietPrice}</p>
+                        <p><strong>Due Date:</strong> ${bill.dueDate}</p>
+                        <p><strong>Total Amount:</strong> ${bill.totalAmount}</p>
+                        <button onclick="window.print()">Print Invoice</button>
+                        <button onclick="deleteBill('${billKey}')">Delete Invoice</button>
+                        <hr>
+                    `;
+
+                    invoiceContainer.innerHTML += invoiceHTML; // Append instead of replace
+                });
+            } else {
+                invoiceContainer.innerHTML = '<p>No bills found for this email.</p>';
+            }
+        });
+    }
+
+    function deleteBill(billKey) {
+        const billRef = database.ref('bills/' + billKey);
+        billRef.remove()
+            .then(() => {
+                alert('Bill deleted successfully!');
+                document.getElementById('invoice').innerHTML = ''; // Clear the invoice display
+                fetchAllEmails(); // Refresh the email list
+            })
+            .catch((error) => {
+                console.error('Error deleting bill: ', error);
+            });
+    }
+</script>
+</body>
+</html>

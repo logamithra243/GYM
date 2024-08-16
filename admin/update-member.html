@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>Manage Members</title>
+    <style>
+        body, h1, table, button {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('https://cdn.media.amplience.net/i/thegymgroup/The_Gym_Group-Generic-Members_Performing_Assorted_Exercises?fmt=auto&h=965&w=1440&sm=c&qlt=default&$qlt$&$poi$');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .button {
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button.delete {
+            background-color: #ff4d4d;
+        }
+
+        .button.delete:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Members</h1>
+        <table id="membersTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Membership Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Members will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9vUqJZrK8yP1fkc9gbVNBJbI_PrqvOd0",
+            authDomain: "gym-8d5d1.firebaseapp.com",
+            databaseURL: "https://gym-8d5d1-default-rtdb.firebaseio.com",
+            projectId: "gym-8d5d1",
+            storageBucket: "gym-8d5d1.appspot.com",
+            messagingSenderId: "509762920091",
+            appId: "1:509762920091:web:76324124895e25cdf9f03e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database().ref("members");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchMembers();
+        });
+
+        function fetchMembers() {
+            database.on('value', snapshot => {
+                const membersTable = document.getElementById('membersTable').getElementsByTagName('tbody')[0];
+                membersTable.innerHTML = ''; // Clear the table
+                snapshot.forEach(member => {
+                    const memberData = member.val();
+                    const row = membersTable.insertRow();
+                    row.innerHTML = `
+                        <td>${memberData.name}</td>
+                        <td>${memberData.email}</td>
+                        <td>${memberData.phone}</td>
+                        <td>${memberData.age}</td>
+                        <td>${memberData.gender}</td>
+                        <td>${memberData.membershipType}</td>
+                        <td>
+                            <button class="button" onclick="showUpdateOptions('${member.key}')">Edit</button>
+                            <button class="button delete" onclick="deleteMember('${member.key}')">Delete</button>
+                        </td>
+                    `;
+                });
+            });
+        }
+
+        function showUpdateOptions(memberId) {
+            const fields = ['name', 'email', 'phone', 'age', 'gender', 'membershipType'];
+            let updateField = prompt(`Which field do you want to update? (${fields.join(', ')})`);
+            if (fields.includes(updateField)) {
+                let newValue = prompt(`Enter new value for ${updateField}`);
+                if (newValue) {
+                    updateMemberField(memberId, updateField, newValue);
+                } else {
+                    alert('Update canceled. No new value entered.');
+                }
+            } else {
+                alert('Invalid field. Update canceled.');
+            }
+        }
+
+        function updateMemberField(memberId, field, value) {
+            let updateData = {};
+            updateData[field] = value;
+
+            database.child(memberId).update(updateData)
+                .then(() => {
+                    alert('Member updated successfully!');
+                    fetchMembers();
+                })
+                .catch(error => {
+                    alert('Failed to update member. Please try again.');
+                    console.error('Error updating member:', error);
+                });
+        }
+
+        function deleteMember(memberId) {
+            if (confirm('Are you sure you want to delete this member?')) {
+                database.child(memberId).remove()
+                    .then(() => {
+                        alert('Member deleted successfully!');
+                        fetchMembers();
+                    })
+                    .catch(error => {
+                        alert('Failed to delete member. Please try again.');
+                        console.error('Error deleting member:', error);
+                    });
+            }
+        }
+    </script>
+</body>
+</html>

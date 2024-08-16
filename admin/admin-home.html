@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Management System - Admin Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://static.vecteezy.com/system/resources/thumbnails/026/781/389/small_2x/gym-interior-background-of-dumbbells-on-rack-in-fitness-and-workout-room-photo.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            gap: 15px;
+        }
+
+        .menu-item {
+            background-color: #007bff99;
+            color: white;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Gym Management System</h1>
+    <div class="menu">
+  
+        <a href="addMember.html" class="menu-item">Add Member</a>
+        <a href="update-member.html" class="menu-item">Update/Delete Members</a>
+        <a href="bill.html" class="menu-item">Create Bills</a>
+        <a href="package/package.html" class="menu-item">Assign Fee Package</a>
+        <a href="supplement/supplement.html" class="menu-item">Supplement Store</a>
+        <a href="diet/diet.html" class="menu-item">Diet Details</a>
+    </div>
+</body>
+</html>

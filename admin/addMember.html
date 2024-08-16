@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>Add Member</title>
+    <style>
+        body, h1, input, button {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-image: url('https://cdn.media.amplience.net/i/thegymgroup/The_Gym_Group-Generic-Members_Performing_Assorted_Exercises?fmt=auto&h=965&w=1440&sm=c&qlt=default&$qlt$&$poi$');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff42;
+            padding: 0px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 500px;
+            margin: auto;
+         
+           
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .input-field {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .submit-button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .alert {
+            width: calc(100% - 20px);
+            padding: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .alert.success {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Member</h1>
+        <form id="addMemberForm">
+            <label for="memberName">Name:</label>
+            <input type="text" id="memberName" class="input-field" required>
+            <label for="memberEmail">Email:</label>
+            <input type="email" id="memberEmail" class="input-field" required>
+            <label for="memberNo">phoneNo:</label>
+            <input type="number" id="PhoneNo" class="input-field" required>
+            <label for="memberAge">Age:</label>
+            <input type="number" id="memberAge" class="input-field" required>
+            <label for="memberGender">Gender:</label>
+            <select id="memberGender" class="input-field" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+            <label for="membershipType">Membership Type:</label>
+            <select id="membershipType" class="input-field" required>
+                <option value="" disabled selected>Select Membership Type</option>
+                <option value="2 month">2 Month</option>
+                <option value="6 month">6 Month</option>
+                <option value="annual">annual</option>
+            </select>
+            <button type="submit" class="submit-button">Add Member</button>
+        </form>
+        <div class="alert"></div>
+    </div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9vUqJZrK8yP1fkc9gbVNBJbI_PrqvOd0",
+            authDomain: "gym-8d5d1.firebaseapp.com",
+            databaseURL: "https://gym-8d5d1-default-rtdb.firebaseio.com",
+            projectId: "gym-8d5d1",
+            storageBucket: "gym-8d5d1.appspot.com",
+            messagingSenderId: "509762920091",
+            appId: "1:509762920091:web:76324124895e25cdf9f03e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const database = firebase.database().ref("members");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const addMemberForm = document.getElementById("addMemberForm");
+
+            if (addMemberForm) {
+                addMemberForm.addEventListener("submit", addMember);
+            }
+        });
+
+        function addMember(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('memberName').value;
+            const email = document.getElementById('memberEmail').value;
+            const phone = document.getElementById('PhoneNo').value;
+            const age = document.getElementById('memberAge').value;
+            const gender = document.getElementById('memberGender').value;
+            const membershipType = document.getElementById('membershipType').value;
+
+            if (!membershipType) {
+                displayAlert('Please select a membership type.', false);
+                return;
+            }
+
+            saveMessages(name, email, phone, age, gender, membershipType);
+
+            document.getElementById("addMemberForm").reset();
+        }
+
+        function saveMessages(name, email, phone, age, gender, membershipType) {
+            const newMemberRef = database.push();
+            newMemberRef.set({
+                name: name,
+                email: email,
+                phone: phone,
+                age: age,
+                gender: gender,
+                membershipType: membershipType,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(() => {
+                displayAlert('Member added successfully!', true);
+            })
+            .catch((error) => {
+                console.error('Error adding member: ', error);
+                displayAlert('Failed to add member. Please try again.', false);
+            });
+        }
+
+        function displayAlert(message, success) {
+            const alertElement = document.querySelector('.alert');
+            alertElement.style.display = 'block';
+            alertElement.innerText = message;
+            alertElement.classList.toggle('success', success);
+
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
