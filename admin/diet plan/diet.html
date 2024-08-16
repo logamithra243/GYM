@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Planning Management</title>
+    <link rel="stylesheet" href="diet.css">
+   
+</head>
+<body>
+ 
+
+    <div class="container">
+        <h1>Manage Diet Plans</h1>
+
+        <!-- Add Diet Plan Form -->
+        <div id="add-diet-plan">
+            <h2>Add New Diet Plan</h2>
+            <form id="addDietPlanForm">
+                <input type="text" id="dietPlanName" placeholder="Diet Plan Name" required>
+                <div id="days-container">
+                    <div class="day-form">
+                        <input type="text" class="day-name" placeholder="Day Name (e.g., Day 1)" required>
+                        <input type="text" class="breakfast" placeholder="Breakfast" required>
+                        <input type="text" class="lunch" placeholder="Lunch" required>
+                        <input type="text" class="dinner" placeholder="Dinner" required>
+                    </div>
+                </div>
+                <button type="button" onclick="addDayForm()">Add Another Day</button>
+                <button type="submit">Add Diet Plan</button>
+            </form>
+        </div>
+
+        <!-- Update Diet Plan Form -->
+        <div id="update-diet-plan" class="hidden">
+            <h2>Update Diet Plan</h2>
+            <form id="updateDietPlanForm">
+                <input type="hidden" id="updateDietPlanId" placeholder="Diet Plan ID" required>
+                <input type="text" id="updateDietPlanName" placeholder="Diet Plan Name">
+                <div id="update-days-container">
+            
+                </div>
+                <button type="button" onclick="addUpdateDayForm()">Add Another Day</button>
+                <button type="submit">Update Diet Plan</button>
+            </form>
+        </div>
+
+        <h2>Available Diet Plans</h2>
+        <table id="dietPlanList">
+            <thead>
+                <tr>
+                    <th>Diet Plan Name</th>
+                    <th>Days</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Diet plan rows will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="diet.js"></script>
+   
+</body>
+</html>
