@@ -8,7 +8,7 @@ The Gym Management System is a web application designed to address common challe
 
 ***Admin Module:***
 
-* Login: Secure access to the admin dashboard.
+* Login: Secure access to the admin dashboard.(Admin email: lmithra502@gmail.com, pwd: 55555)
 
 * Add Member: Register new members into the system.
 
