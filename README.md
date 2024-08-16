@@ -28,6 +28,8 @@ The Gym Management System is a web application designed to address common challe
 
 * View Bill Receipts: Access and download payment receipts.
 
+* View Details: Access to view available supplements, package offered and diet plans.
+
 ***User Module:***
 
 * Login: Basic access for users (non-members).
