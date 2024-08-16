@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.piplum.com/wp-content/uploads/2022/01/six-pack-quote-tired-fitness-influencer.jpg.webp');
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #eddbdb;
+           
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 150px; /* Adjust this value to move the heading up or down */
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px; /* Adjust this value to move the buttons up or down */
+        }
+
+        .role-button {
+            background-color: #303134;
+            color: #dacccc;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .role-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Gym Management System</h1>
+    <div class="button-group">
+        <button onclick="redirectToLogin('admin/admin-login')" class="role-button">Login as Admin</button>
+        <button onclick="redirectToLogin('member/member-login')" class="role-button">Login as Member</button>
+        <button onclick="redirectToLogin('user/user-login')" class="role-button">Login as User</button>
+    </div>
+
+    <script>
+        function redirectToLogin(role) {
+            window.location.href = role + '.html'; 
+        }
+    </script>
+</body>
+</html>
