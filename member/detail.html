@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Management</title>
+    <style> 
+       body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #182028;
+    color: #ecf0f1;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    color: #e74c3c;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+}
+
+h1::after {
+    content: '';
+    width: 100px;
+    height: 4px;
+    background-color: #e74c3c;
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 0 20px;
+}
+
+.card {
+    background-color: #34495e;
+    border-radius: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+}
+
+.card img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.05);
+}
+
+.card h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #ecf0f1;
+}
+
+.card p {
+    color: #bdc3c7;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.card span {
+    font-weight: bold;
+    color: #e74c3c;
+    font-size: 1.2em;
+}
+
+.card ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.card ul li {
+    margin-bottom: 10px;
+    color: #bdc3c7;
+    text-align: left;
+    font-size: 1em;
+}
+
+.card ul li strong {
+    color: #ecf0f1;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+
+    .card-container {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 15px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card h2 {
+        font-size: 1.5em;
+    }
+
+    .card p {
+        font-size: 0.9em;
+    }
+
+    .card span {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 10px;
+    }
+
+    .card h2 {
+        font-size: 1.3em;
+    }
+
+    .card p {
+        font-size: 0.85em;
+    }
+
+    .card span {
+        font-size: 1em;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Available Supplements</h1>
+        <div id="supplement-list" class="card-container"></div>
+
+        <h1>Diet Plans</h1>
+        <div id="diet-plan-list" class="card-container"></div>
+
+        <h1>Packages</h1>
+        <div id="package-list" class="card-container"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-database.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+    apiKey: "AIzaSyC9vUqJZrK8yP1fkc9gbVNBJbI_PrqvOd0",
+    authDomain: "gym-8d5d1.firebaseapp.com",
+    databaseURL: "https://gym-8d5d1-default-rtdb.firebaseio.com",
+    projectId: "gym-8d5d1",
+    storageBucket: "gym-8d5d1.appspot.com",
+    messagingSenderId: "509762920091",
+    appId: "1:509762920091:web:76324124895e25cdf9f03e"
+  };
+
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+
+// Load Supplements
+function loadSupplements() {
+    database.ref('supplements').once('value', function(snapshot) {
+        var supplements = snapshot.val();
+        var supplementList = document.getElementById('supplement-list');
+        supplementList.innerHTML = '';
+        for (var id in supplements) {
+            var supplement = supplements[id];
+            var card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${supplement.imageUrl}" alt="${supplement.name}">
+                <h2>${supplement.name}</h2>
+                <p>${supplement.description}</p>
+                <span>Price: ${supplement.price}</span>
+            `;
+            supplementList.appendChild(card);
+        }
+    });
+}
+
+// Load Diet Plans
+function loadDietPlans() {
+    database.ref('dietPlans').once('value', function(snapshot) {
+        var dietPlans = snapshot.val();
+        var dietPlanList = document.getElementById('diet-plan-list');
+        dietPlanList.innerHTML = '';
+        for (var id in dietPlans) {
+            var dietPlan = dietPlans[id];
+            var card = document.createElement('div');
+            card.className = 'card';
+            var daysContent = dietPlan.days.map(day => `
+                <li><strong>${day.dayName}</strong>: Breakfast - ${day.breakfast}, Lunch - ${day.lunch}, Dinner - ${day.dinner}</li>
+            `).join('');
+            card.innerHTML = `
+                <h2>${dietPlan.name}</h2>
+                <ul>${daysContent}</ul>
+            `;
+            dietPlanList.appendChild(card);
+        }
+    });
+}
+
+// Load Packages
+function loadPackages() {
+    database.ref('packages').once('value', function(snapshot) {
+        var packages = snapshot.val();
+        var packageList = document.getElementById('package-list');
+        packageList.innerHTML = '';
+        for (var id in packages) {
+            var packageData = packages[id];
+            var card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h2>${packageData.name}</h2>
+                <p>${packageData.benefits}</p>
+                <span>Price: ${packageData.price}/-month</span>
+          
+            `;
+            packageList.appendChild(card);
+        }
+    });
+}
+
+// Load all data on page load
+window.onload = function() {
+    loadSupplements();
+    loadDietPlans();
+    loadPackages();
+};
+
+    </script>
+</body>
+</html>

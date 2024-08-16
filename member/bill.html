@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c2c2c;
+            color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #555;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .bill {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .bill h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Member Dashboard</h2>
+    <button id="viewBillsBtn">View Bills</button>
+
+    <div id="billsContainer"></div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="member.js"></script>
+
+<script>
+    
+
+    const database = firebase.database();
+    const email = localStorage.getItem("email");
+    document.getElementById('viewBillsBtn').addEventListener('click', function() {
+        
+        const memberEmail = email;
+
+        if (memberEmail) {
+            fetchBills(memberEmail);
+        } else {
+            alert('Please enter a valid email address.');
+        }
+    });
+
+    function fetchBills(email) {
+    const billsRef = database.ref('bills');
+    billsRef.orderByChild('memberEmail').equalTo(email).once('value', snapshot => {
+        const billsContainer = document.getElementById('billsContainer');
+        billsContainer.innerHTML = '';
+
+        if (snapshot.exists()) {
+            snapshot.forEach(childSnapshot => {
+                const bill = childSnapshot.val();
+                const billHTML = `
+                    <div class="bill">
+                        <h3>Invoice</h3>
+                        <p><strong>Date:</strong> ${bill.date}</p>
+                        <p><strong>Supplement:</strong> ${bill.supplement}</p>
+                        <p><strong>Supplement Price:</strong> ${bill.supplementPrice}</p>
+                        <p><strong>Supplement Quantity:</strong> ${bill.supplementQuantity}</p>
+                        <p><strong>Package Name:</strong> ${bill.dietDetail}</p>
+                        <p><strong>Package Price:</strong> ${bill.dietPrice}</p>
+                        <p><strong>Total Amount:</strong> ${bill.totalAmount}</p>
+                        <p><strong>Due Date:</strong> ${bill.dueDate}</p> <!-- Corrected reference -->
+                        <button onclick="window.print()">Print Invoice</button>
+                    </div>
+                `;
+                billsContainer.insertAdjacentHTML('beforeend', billHTML);
+            });
+        } else {
+            billsContainer.innerHTML = '<p>No bills found for this email.</p>';
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>
+
