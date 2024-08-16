@@ -41,3 +41,19 @@ The Gym Management System is a web application designed to address common challe
 > **Frontend: HTML, CSS, JavaScript**
 
 > **Backend: Firebase (Realtime Database, Authentication)**
+
+**Database Structure**
+
+***Admin:*** Contains admin-specific details and privileges.
+
+***Members:*** Stores member information.
+
+***Users:*** Basic user information for non-member access.
+
+***Bills:*** Stores all generated payment receipts.
+
+***package:*** Stores package details like fees, no. of days, etc.
+
+***Supplements:*** Information on supplements available in the gym store.
+
+***Diet Plans:*** Nutrition and meal plans offered to members.
