@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="../style.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container">
+        <form id="loginForm">
+            <div class="alert" style="display:none;">Message</div>
+            <h1>User Login</h1>
+            <input type="email" id="loginEmail" placeholder="Email" class="input-field">
+            <input type="password" id="loginPassword" placeholder="Password" class="input-field">
+            <button type="submit" class="login-button">Login</button>
+            <p>Don't have an account? <a href="user-register.html">Register here</a></p>
+        </form>
+    </div>
+    <script src="user.js"></script>
+    
+</body>
+</html>
